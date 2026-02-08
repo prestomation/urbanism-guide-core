@@ -1,0 +1,45 @@
+{{ with .Site.Params.goatCounterCode }}
+<!-- GoatCounter Analytics -->
+<script>
+    // Disable GoatCounter on PR preview deployments.
+    if (window.location.pathname.startsWith('/pr-preview/'))
+        window.goatcounter = {no_onload: true}
+</script>
+<script data-goatcounter="https://{{ . }}.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
+<script>
+  // SPA navigation tracking
+  (function() {
+    var defined = function(v) { return typeof v !== 'undefined'; };
+
+    // Track page views on hash changes (for SPA-like navigation)
+    window.addEventListener('hashchange', function() {
+      if (defined(window.goatcounter) && defined(window.goatcounter.count)) {
+        window.goatcounter.count({
+          path: location.pathname + location.search + location.hash
+        });
+      }
+    });
+
+    // Track page views on popstate (browser back/forward)
+    window.addEventListener('popstate', function() {
+      if (defined(window.goatcounter) && defined(window.goatcounter.count)) {
+        window.goatcounter.count({
+          path: location.pathname + location.search + location.hash
+        });
+      }
+    });
+
+    // Expose search tracking function for Pagefind integration
+    window.trackSearch = function(query) {
+      if (defined(window.goatcounter) && defined(window.goatcounter.count) && query && query.trim()) {
+        window.goatcounter.count({
+          path: 'search',
+          title: 'Search: ' + query.trim(),
+          event: true
+        });
+      }
+    };
+  })();
+</script>
+{{ end }}

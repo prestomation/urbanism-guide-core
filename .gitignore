@@ -1,0 +1,25 @@
+# Hugo build output
+public/
+resources/_gen/
+.hugo_build.lock
+
+# Hugo cache
+hugo_cache/
+
+# htmltest output
+.htmltest/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Node (if used for asset processing)
+node_modules/
+package-lock.json

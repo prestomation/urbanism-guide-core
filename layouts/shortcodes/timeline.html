@@ -1,0 +1,30 @@
+{{ $timeline := site.Data.timeline }}
+{{ if $timeline }}
+<div class="timeline">
+  {{ range $timeline }}
+  <div class="timeline-entry" data-year="{{ .year }}">
+    <div class="timeline-marker">
+      <span class="timeline-year">{{ .year }}</span>
+    </div>
+    <div class="timeline-content">
+      <h3>{{ .title }}</h3>
+      <p>{{ .description }}</p>
+      {{ with .legacy }}
+      <p class="timeline-legacy">{{ . }}</p>
+      {{ end }}
+      {{ with .sources }}
+      <div class="timeline-sources">
+        <span class="timeline-sources-label">Sources:</span>
+        {{ with .primary }}
+        <a href="{{ .url }}" class="timeline-source timeline-source-primary" target="_blank" rel="noopener">{{ .name }}</a>
+        {{ end }}
+        {{ with .secondary }}
+        <a href="{{ .url }}" class="timeline-source timeline-source-secondary" target="_blank" rel="noopener">{{ .name }}</a>
+        {{ end }}
+      </div>
+      {{ end }}
+    </div>
+  </div>
+  {{ end }}
+</div>
+{{ end }}
