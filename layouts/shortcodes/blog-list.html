@@ -1,0 +1,28 @@
+{{ $pages := where site.RegularPages "Section" "blog" }}
+{{ $pages = $pages.ByDate.Reverse }}
+{{ if $pages }}
+<div class="blog-list">
+  {{ range $pages }}
+  <article class="blog-entry">
+    <h2><a href="{{ .RelPermalink }}">{{ .Title }}</a></h2>
+    <div class="blog-meta">
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "January 2, 2006" }}</time>
+      {{ with .Params.tags }}
+        {{ range . }}
+        <span class="blog-tag">{{ . }}</span>
+        {{ end }}
+      {{ end }}
+    </div>
+    {{ with .Params.summary }}
+    <p>{{ . }}</p>
+    {{ else }}
+    <p>{{ .Summary }}</p>
+    {{ end }}
+    <a href="{{ .RelPermalink }}">Read more &rarr;</a>
+  </article>
+  <hr>
+  {{ end }}
+</div>
+{{ else }}
+<p><em>No blog posts yet. Check back soon.</em></p>
+{{ end }}

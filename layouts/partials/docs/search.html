@@ -1,0 +1,38 @@
+<div class="book-search">
+  <div id="pagefind-search"></div>
+</div>
+<script>
+  window.addEventListener('DOMContentLoaded', function() {
+    if (typeof PagefindUI === 'undefined') {
+      console.error('PagefindUI not loaded');
+      return;
+    }
+    try {
+      new PagefindUI({
+        element: "#pagefind-search",
+        showSubResults: true,
+        showImages: false,
+        bundlePath: "{{ "pagefind/" | relURL }}"
+      });
+
+      // Track search queries via GoatCounter (debounced)
+      var searchInput = document.querySelector('#pagefind-search input[type="text"]');
+      if (searchInput) {
+        var searchTimeout;
+        searchInput.addEventListener('input', function() {
+          clearTimeout(searchTimeout);
+          var query = this.value;
+          if (query && query.length >= 3) {
+            searchTimeout = setTimeout(function() {
+              if (typeof window.trackSearch === 'function') {
+                window.trackSearch(query);
+              }
+            }, 1000);
+          }
+        });
+      }
+    } catch (e) {
+      console.error('Pagefind init error:', e);
+    }
+  });
+</script>

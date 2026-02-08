@@ -1,0 +1,22 @@
+# htmltest configuration
+# https://github.com/wjdp/htmltest
+
+DirectoryPath: "public"
+
+# Check internal links (anchors, relative paths)
+CheckInternal: true
+
+# Skip external links (checked by scripts/check-external-links.py instead)
+CheckExternal: false
+
+# Ignore URLs matching these patterns
+IgnoreURLs:
+  - "^mailto:"
+  - "^/pr-preview/"
+
+# Ignore PR preview directories (they reference other PR builds)
+IgnoreDirs:
+  - "^pr-preview/"
+
+# Output format
+OutputDir: ".htmltest"

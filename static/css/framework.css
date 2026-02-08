@@ -1,0 +1,694 @@
+/* ==========================================================================
+   Urbanism Guide — Framework Styles
+   Core component styles for the urbanism-guide platform.
+   All colors reference CSS custom properties so city repos can override
+   them via a brand.css file.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Default color palette (CSS custom properties)
+   City repos override these in their own brand.css
+   -------------------------------------------------------------------------- */
+:root {
+  --color-link: #0046AD;
+  --accent-teal: #00839A;
+  --accent-emerald: #A3D559;
+  --accent-gold: #FECB00;
+  --accent-light-blue: #63B1E5;
+  --accent-gradient: linear-gradient(135deg, var(--color-link), var(--accent-teal));
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  --border-radius: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-link: #63B1E5;
+    --accent-teal: #2CC8D9;
+    --accent-emerald: #B8E07C;
+    --accent-gold: #FFD84D;
+    --accent-light-blue: #8DC8ED;
+    --accent-gradient: linear-gradient(135deg, #3D7FCC, #2DAABB);
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+    --card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. Typography refinements
+   -------------------------------------------------------------------------- */
+.markdown h1 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+
+.markdown h2 {
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--gray-200);
+  margin-top: 2rem;
+}
+
+.markdown h3 {
+  font-weight: 600;
+}
+
+.markdown h4 {
+  font-weight: 600;
+  color: var(--color-link);
+}
+
+/* Slightly wider content measure for readability */
+.book-page {
+  max-width: 56rem;
+}
+
+/* --------------------------------------------------------------------------
+   3. Homepage hero & intro
+   -------------------------------------------------------------------------- */
+body.book-kind-home .markdown > h1:first-child {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  padding-bottom: 0.5rem;
+  border-bottom: none;
+  margin-bottom: 0.25rem;
+}
+
+/* The intro bold tagline */
+body.book-kind-home .markdown > h1:first-child + p {
+  font-size: 1.15rem;
+  line-height: 1.7;
+  color: var(--body-font-color);
+  opacity: 0.85;
+  max-width: 42rem;
+}
+
+/* The longer intro paragraph */
+body.book-kind-home .markdown > h1:first-child + p + p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--body-font-color);
+  opacity: 0.7;
+  max-width: 42rem;
+  margin-bottom: 2rem;
+}
+
+/* Section headings on home page */
+body.book-kind-home .markdown > h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Bullet list on home page */
+body.book-kind-home .markdown > ul {
+  padding-left: 0;
+  list-style: none;
+  margin-bottom: 2rem;
+}
+
+body.book-kind-home .markdown > ul > li {
+  position: relative;
+  padding-left: 1.75rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.6;
+}
+
+body.book-kind-home .markdown > ul > li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+}
+
+/* --------------------------------------------------------------------------
+   4. Homepage cards (columns shortcode)
+   -------------------------------------------------------------------------- */
+body.book-kind-home .book-columns {
+  gap: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+body.book-kind-home .book-columns > .flex-even {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  margin: 0;
+}
+
+body.book-kind-home .book-columns > .flex-even:hover {
+  box-shadow: var(--card-shadow-hover);
+  border-color: var(--color-link);
+  transform: translateY(-2px);
+}
+
+/* Card headings */
+body.book-kind-home .book-columns > .flex-even h3 {
+  font-size: 1.1rem;
+  font-weight: 650;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+body.book-kind-home .book-columns > .flex-even h3 a[href] {
+  color: var(--color-link);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+body.book-kind-home .book-columns > .flex-even h3 a[href]:hover {
+  text-decoration: none;
+  opacity: 0.8;
+}
+
+body.book-kind-home .book-columns > .flex-even h3 a[href]:visited {
+  color: var(--color-link);
+}
+
+/* Card body text */
+body.book-kind-home .book-columns > .flex-even p {
+  font-size: 0.925rem;
+  line-height: 1.6;
+  color: var(--body-font-color);
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   5. Sidebar navigation polish
+   -------------------------------------------------------------------------- */
+.book-menu nav ul a {
+  border-radius: 0.25rem;
+  padding: 0.4rem 0.5rem;
+  margin: 1px 0;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+.book-menu nav ul a[href]:hover {
+  background-color: var(--gray-100);
+  opacity: 1;
+}
+
+.book-menu nav ul a.active {
+  background-color: var(--gray-100);
+  font-weight: 600;
+}
+
+.book-brand {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* --------------------------------------------------------------------------
+   6. Content page improvements — tables
+   -------------------------------------------------------------------------- */
+.markdown table {
+  border-radius: var(--border-radius);
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+}
+
+.markdown table tr th {
+  background: var(--color-link);
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+@media (prefers-color-scheme: dark) {
+  .markdown table tr th {
+    background: rgba(99, 177, 229, 0.15);
+    color: var(--body-font-color);
+    border-color: var(--gray-200);
+  }
+}
+
+.markdown table tr td {
+  font-size: 0.925rem;
+}
+
+/* --------------------------------------------------------------------------
+   7. Content page improvements — blockquotes
+   -------------------------------------------------------------------------- */
+.markdown blockquote {
+  border-left: 4px solid var(--color-link);
+  background: var(--gray-100);
+  padding: 1rem 1.25rem;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  font-style: italic;
+  color: var(--body-font-color);
+  opacity: 0.9;
+}
+
+/* --------------------------------------------------------------------------
+   8. Content page improvements — inline code
+   -------------------------------------------------------------------------- */
+.markdown code {
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 0.25rem;
+  font-size: 0.85em;
+  padding: 0.15em 0.35em;
+}
+
+/* --------------------------------------------------------------------------
+   9. Content page improvements — horizontal rules
+   -------------------------------------------------------------------------- */
+.markdown hr {
+  margin: 2.5rem 0;
+  background: var(--gray-200);
+  height: 1px;
+  border: none;
+}
+
+/* --------------------------------------------------------------------------
+   10. Link hover transitions (global)
+   -------------------------------------------------------------------------- */
+.markdown a[href] {
+  transition: color 0.15s ease;
+  text-decoration-color: transparent;
+}
+
+.markdown a[href]:hover {
+  text-decoration-color: currentColor;
+}
+
+/* --------------------------------------------------------------------------
+   11. Timeline styles
+   -------------------------------------------------------------------------- */
+.timeline {
+  position: relative;
+  padding: 1.5rem 0;
+  margin: 2rem 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 60px;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--color-link), var(--accent-teal));
+  opacity: 0.25;
+  border-radius: 3px;
+}
+
+.timeline-entry {
+  position: relative;
+  padding: 0 0 2rem 90px;
+  min-height: 80px;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 60px;
+  text-align: center;
+}
+
+.timeline-year {
+  display: inline-block;
+  background: var(--accent-gradient);
+  color: white;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.375rem;
+  font-weight: 700;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.timeline-marker::after {
+  content: '';
+  position: absolute;
+  right: -19px;
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  background: var(--color-link);
+  border: 3px solid var(--body-background, white);
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+}
+
+.timeline-entry:hover .timeline-marker::after {
+  transform: scale(1.3);
+}
+
+.timeline-content {
+  background: var(--gray-100);
+  border-radius: var(--border-radius);
+  padding: 1.25rem 1.5rem;
+  border-left: 3px solid var(--color-link);
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.timeline-entry:hover .timeline-content {
+  box-shadow: var(--card-shadow-hover);
+  transform: translateX(2px);
+}
+
+.timeline-content h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-weight: 650;
+}
+
+.timeline-content p {
+  margin: 0.5rem 0;
+  line-height: 1.65;
+}
+
+.timeline-legacy {
+  font-size: 0.95rem;
+  color: var(--body-font-color);
+  opacity: 0.8;
+  font-style: italic;
+}
+
+.timeline-sources {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.timeline-sources-label {
+  font-weight: 600;
+  color: var(--body-font-color);
+  opacity: 0.6;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.timeline-source {
+  display: inline-block;
+  background: var(--color-link);
+  color: white;
+  padding: 0.15rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  opacity: 0.85;
+  text-decoration: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.timeline-source:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   12. Blog list styles
+   -------------------------------------------------------------------------- */
+.blog-list {
+  margin: 1rem 0;
+}
+
+.blog-entry {
+  margin-bottom: 1.75rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.blog-entry:hover {
+  box-shadow: var(--card-shadow-hover);
+  border-color: var(--color-link);
+}
+
+.blog-entry h2 {
+  margin-top: 0;
+  margin-bottom: 0.35rem;
+  font-size: 1.2rem;
+  font-weight: 650;
+}
+
+.blog-entry h2 a {
+  text-decoration: none;
+  color: var(--body-font-color);
+  transition: color 0.15s ease;
+}
+
+.blog-entry h2 a:hover {
+  color: var(--color-link);
+}
+
+.blog-meta {
+  font-size: 0.825rem;
+  color: var(--body-font-color);
+  opacity: 0.6;
+  margin-bottom: 0.5rem;
+}
+
+.blog-tag {
+  display: inline-block;
+  background: var(--gray-200);
+  padding: 0.15rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 0.25rem;
+  text-transform: lowercase;
+  letter-spacing: 0.02em;
+}
+
+.blog-entry p {
+  margin: 0.5rem 0 0 0;
+  line-height: 1.6;
+  font-size: 0.925rem;
+  opacity: 0.85;
+}
+
+.blog-entry p:last-child a {
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* --------------------------------------------------------------------------
+   13. Dark mode adjustments
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  .timeline-content {
+    background: rgba(255, 255, 255, 0.04);
+    border-left-color: var(--color-link);
+  }
+
+  .timeline-marker::after {
+    border-color: var(--body-background, #343a40);
+  }
+
+  .timeline-source {
+    background: var(--color-link);
+    color: #fff !important;
+  }
+
+  .timeline-source:hover {
+    opacity: 1;
+  }
+
+  .blog-entry {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  body.book-kind-home .book-columns > .flex-even {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  body.book-kind-home .book-columns > .flex-even:hover {
+    border-color: var(--color-link);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Gradient text for dark mode */
+  body.book-kind-home .markdown > h1:first-child {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   14. Pagefind search styles
+   -------------------------------------------------------------------------- */
+.book-search {
+  margin-bottom: 0.5rem;
+}
+
+.pagefind-ui {
+  --pagefind-ui-scale: 0.7;
+  --pagefind-ui-primary: var(--color-link);
+  --pagefind-ui-text: var(--body-font-color);
+  --pagefind-ui-background: var(--body-background, #fff);
+  --pagefind-ui-border: var(--gray-200);
+  --pagefind-ui-border-width: 1px;
+  --pagefind-ui-border-radius: 0.375rem;
+  --pagefind-ui-font: inherit;
+}
+
+.pagefind-ui .pagefind-ui__search-input {
+  font-size: 0.875rem;
+  padding: 0.4rem 0.6rem;
+  height: auto;
+}
+
+.pagefind-ui .pagefind-ui__search-clear {
+  padding: 0 0.5rem;
+}
+
+.pagefind-ui .pagefind-ui__result-link {
+  color: var(--color-link);
+}
+
+.pagefind-ui .pagefind-ui__result-excerpt {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pagefind-ui {
+    --pagefind-ui-text: var(--body-font-color, #ccc);
+    --pagefind-ui-background: var(--body-background, #343a40);
+    --pagefind-ui-border: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   15. Glossary term styling
+   -------------------------------------------------------------------------- */
+
+/* "Why it matters" / "See also" / "Learn more" bold labels */
+.markdown p > strong:first-child {
+  color: var(--color-link);
+}
+
+/* --------------------------------------------------------------------------
+   16. "Last updated" footer text
+   -------------------------------------------------------------------------- */
+.markdown > p:last-child > em:only-child {
+  display: block;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--gray-200);
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+/* --------------------------------------------------------------------------
+   17. Footer polish
+   -------------------------------------------------------------------------- */
+.book-footer {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--gray-200);
+}
+
+/* --------------------------------------------------------------------------
+   18. Closing section on homepage
+   -------------------------------------------------------------------------- */
+body.book-kind-home .markdown > hr + p {
+  font-size: 0.9rem;
+  opacity: 0.7;
+  font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   19. Responsive adjustments
+   -------------------------------------------------------------------------- */
+@media (max-width: 600px) {
+  .timeline::before {
+    left: 20px;
+  }
+
+  .timeline-entry {
+    padding-left: 50px;
+  }
+
+  .timeline-marker {
+    width: 40px;
+  }
+
+  .timeline-year {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.3rem;
+  }
+
+  .timeline-marker::after {
+    right: -19px;
+    width: 10px;
+    height: 10px;
+  }
+
+  body.book-kind-home .markdown > h1:first-child {
+    font-size: 1.75rem;
+  }
+
+  body.book-kind-home .book-columns > .flex-even {
+    padding: 1rem 1.25rem;
+  }
+
+  .blog-entry {
+    padding: 1rem 1.25rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   20. Selection highlight
+   -------------------------------------------------------------------------- */
+::selection {
+  background: rgba(0, 70, 173, 0.2);
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background: rgba(99, 177, 229, 0.25);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   21. Table of contents polish
+   -------------------------------------------------------------------------- */
+.book-toc nav {
+  padding-left: 0.25rem;
+  border-left: 2px solid var(--gray-200);
+}
+
+.book-toc nav ul a {
+  padding: 0.25rem 0;
+  transition: color 0.15s ease;
+}
+
+.book-toc nav ul a[href]:hover {
+  opacity: 0.7;
+}

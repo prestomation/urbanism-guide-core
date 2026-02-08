@@ -1,0 +1,41 @@
+name: PR Preview Cleanup
+
+on:
+  workflow_call:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pr-preview-cleanup
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: gh-pages
+
+      - name: Remove preview directory
+        run: |
+          if [ -d "pr-preview/${{ github.event.number }}" ]; then
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+
+            git rm -rf "pr-preview/${{ github.event.number }}"
+
+            # Remove pr-preview dir itself if empty
+            if [ -d "pr-preview" ] && [ -z "$(ls -A pr-preview 2>/dev/null)" ]; then
+              git rm -rf pr-preview
+            fi
+
+            git commit -m "Remove PR #${{ github.event.number }} preview"
+            git push origin gh-pages
+          fi

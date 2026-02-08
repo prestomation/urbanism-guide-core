@@ -1,0 +1,41 @@
+# urbanism-guide-core shared defaults
+# City repos import this module and override these values in their own hugo.toml
+
+languageCode = "en-us"
+
+uglyURLs = false
+
+enableGitInfo = true
+enableEmoji = true
+
+[params]
+  BookTheme = "auto"
+  BookToC = true
+  BookSection = "*"
+  BookDateFormat = "January 2, 2006"
+  BookSearch = false
+  BookComments = false
+  BookPortableLinks = true
+
+[params.bookToc]
+  startLevel = 2
+  endLevel = 4
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+    ordered = false
+  [markup.highlight]
+    style = "github"
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
