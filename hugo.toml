@@ -3,6 +3,10 @@
 
 languageCode = "en-us"
 
+[module]
+[[module.imports]]
+path = "github.com/alex-shpak/hugo-book"
+
 uglyURLs = false
 
 enableGitInfo = true
