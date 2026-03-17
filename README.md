@@ -13,7 +13,7 @@ module github.com/your-org/your-city-urbanism-guide
 
 go 1.21
 
-require github.com/prestomation/urbanism-guide-core v0.0.0
+require github.com/prestomation/urbanism-guide-core v0.1.0
 ```
 
 ### 2. City repo `hugo.toml`
@@ -119,10 +119,31 @@ All features degrade gracefully if unused.
 
 ## Versioning
 
-City repos can pin imports to specific versions:
+City repos should pin to a specific release tag rather than tracking `@main`:
 
 ```
-require github.com/prestomation/urbanism-guide-core v1.2.0
+require github.com/prestomation/urbanism-guide-core v0.1.0
 ```
 
-Or track `@main` for continuous updates.
+**To update to a new core version:**
+1. Change the version in the city repo's `go.mod`
+2. Run `hugo mod tidy` to update `go.sum`
+3. Test locally, then open a PR
+
+See all releases: https://github.com/prestomation/urbanism-guide-core/releases
+
+## Release Process (maintainers)
+
+Releases are created by pushing a semver tag:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+The [release workflow](.github/workflows/release.yml) will automatically create a GitHub Release with generated release notes from commit messages since the last tag.
+
+**Version conventions:**
+- **Patch** (`v0.1.x`): CSS tweaks, bug fixes, script improvements
+- **Minor** (`v0.x.0`): New layouts, shortcodes, or workflow features
+- **Major** (`vX.0.0`): Breaking changes to layout structure or required config keys
