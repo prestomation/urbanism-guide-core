@@ -114,6 +114,12 @@ jobs:
           cp -r /tmp/site-build/* .
           touch .nojekyll
 
+          # Preserve CNAME for custom domain (GitHub Pages requires this on gh-pages branch)
+          # Hugo copies static/CNAME automatically; fall back to repo-root CNAME if present
+          if [ ! -f CNAME ] && [ -f "$GITHUB_WORKSPACE/CNAME" ]; then
+            cp "$GITHUB_WORKSPACE/CNAME" CNAME
+          fi
+
           git add -A
           git commit -m "Deploy site from ${{ github.sha }}" || exit 0
           git push origin gh-pages --force

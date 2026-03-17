@@ -109,6 +109,11 @@ jobs:
           mkdir -p "pr-preview/${{ github.event.number }}"
           cp -r /tmp/pr-preview-${{ github.event.number }}/* "pr-preview/${{ github.event.number }}/"
 
+          # Preserve CNAME for custom domain
+          if [ ! -f CNAME ] && [ -f "$GITHUB_WORKSPACE/CNAME" ]; then
+            cp "$GITHUB_WORKSPACE/CNAME" CNAME
+          fi
+
           git add -A
           git commit -m "Update PR #${{ github.event.number }} preview" || exit 0
           git push origin gh-pages --force
