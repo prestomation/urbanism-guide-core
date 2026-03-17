@@ -63,9 +63,13 @@ jobs:
         run: |
           if [ -f scripts/validate-timeline.py ]; then
             python3 scripts/validate-timeline.py
-          else
-            hugo mod vendor
-            python3 _vendor/github.com/prestomation/urbanism-guide-core/scripts/validate-timeline.py
+          elif [ -f data/timeline.yaml ]; then
+            SCRIPT=$(curl -fsSL https://raw.githubusercontent.com/prestomation/urbanism-guide-core/main/scripts/validate-timeline.py)
+            if [ -z "$SCRIPT" ]; then
+              echo "ERROR: Failed to download validate-timeline.py from core repo"
+              exit 1
+            fi
+            echo "$SCRIPT" | python3
           fi
 
       - name: Build with Hugo
