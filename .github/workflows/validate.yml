@@ -61,17 +61,25 @@ jobs:
           HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
         run: hugo mod tidy
 
+      - name: Fetch core scripts (for fallback timeline validation)
+        if: ${{ inputs.run_timeline_validation }}
+        uses: actions/checkout@v4
+        with:
+          repository: prestomation/urbanism-guide-core
+          ref: ${{ inputs.core_version }}
+          path: .urbanism-core
+          sparse-checkout: |
+            scripts/validate-timeline.py
+          sparse-checkout-cone-mode: false
+
       - name: Validate timeline order
         if: ${{ inputs.run_timeline_validation }}
         run: |
           if [ -f scripts/validate-timeline.py ]; then
             python3 scripts/validate-timeline.py
           elif [ -f data/timeline.yaml ]; then
-            # Download from a pinned release tag (not main) to prevent supply-chain risk
-            CORE_VERSION="${{ inputs.core_version }}"
-            curl -fsSL "https://raw.githubusercontent.com/prestomation/urbanism-guide-core/${CORE_VERSION}/scripts/validate-timeline.py" \
-              -o /tmp/validate-timeline.py
-            python3 /tmp/validate-timeline.py
+            # Use git-verified checkout of core scripts instead of curl (supply-chain safe)
+            python3 .urbanism-core/scripts/validate-timeline.py
           fi
 
       - name: Build with Hugo
