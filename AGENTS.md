@@ -146,55 +146,32 @@ All three are thin stubs calling core's reusable workflows. The core workflows h
 
 ## CI Discipline — Shift Left
 
-**Never push changes directly to `main`.** All changes — including go.mod version bumps — must go through a PR so `pr-preview.yml` validates the build before merge. Direct-to-main pushes skip the pre-merge validation gate and are the primary cause of deploy failures.
+**Never push changes directly to `main`.** All changes — including `go.mod` version bumps — must go through a PR so `pr-preview.yml` validates the build before merge. Direct-to-main pushes skip the pre-merge validation gate and are the primary cause of deploy failures.
 
 ### Rules
 
 1. **Every change needs a PR** — `go.mod` bumps, content edits, config changes, workflow updates. No exceptions.
 2. **PR preview must pass before merge** — `pr-preview.yml` runs the full build + validation. If it fails, fix before merging.
 3. **`deploy.yml` and `pr-preview.yml` must stay in sync** — any validation step added to one must be added to the other. The PR preview is only useful as a gate if it runs the same checks as the deploy.
-4. **After merge, always run the deploy checker** before reporting success:
-   ```bash
-   bash ~/.openclaw/workspace/skills/post-pull-request/scripts/check_deploy.sh \
-     prestomation/<city>-urbanism-guide \
-     --url https://<city>.urbanism-guide.com/ \
-     --timeout-minutes 15
-   ```
-5. **If deploy fails, do not push more commits to `main`** — open a new PR with the fix, let it go through preview, then merge.
+4. **After merge, verify the deploy CI on `main` passes** and confirm the live site returns HTTP 200 before declaring done.
+5. **If deploy fails, open a new PR with the fix** — do not push more commits directly to `main`.
 
-### The correct workflow for version bumps
+### The correct workflow for any change
 
-Two skill scripts must be used — they handle waiting, Amazon Q review triggering, and log collection automatically. Do not manually poll or curl for status.
-
-**Script 1 — Before merge:** `poll_pr.sh`
-Triggers Amazon Q review, waits for all CI checks to complete, outputs all check results and review comments. Run after every push to a PR branch.
 ```bash
-bash ~/.openclaw/workspace/skills/post-pull-request/scripts/poll_pr.sh <PR_NUMBER> <owner/repo> [--timeout-minutes 20]
-```
-Read the output carefully — address every Amazon Q comment and every failed check before merging.
+# 1. Create a branch
+git checkout -b chore/your-change
 
-**Script 2 — After merge:** `check_deploy.sh`
-Waits for the deploy CI run on `main` to complete, then hits the live URL and verifies HTTP 200. Do not declare success until this returns clean.
-```bash
-bash ~/.openclaw/workspace/skills/post-pull-request/scripts/check_deploy.sh <owner/repo> --url <https://city.urbanism-guide.com/> [--timeout-minutes 15]
-```
+# 2. Make changes, commit, push
+git commit -m "your message"
+git push origin chore/your-change
 
-**Full example for a version bump:**
-```bash
-# 1. Create branch and PR
-git checkout -b chore/bump-core-v0.3.1
-# edit go.mod
-git commit -m "chore: bump urbanism-guide-core to v0.3.1"
-git push origin chore/bump-core-v0.3.1
-gh pr create --title "chore: bump core to v0.3.1" --body "Bumps urbanism-guide-core to v0.3.1" --repo <owner/repo>
+# 3. Open a PR and wait for CI + code review to pass
+gh pr create --title "your title" --repo <owner/repo>
+# Address all CI failures and reviewer comments before merging
 
-# 2. Wait for checks + Amazon Q review — READ THE OUTPUT
-bash ~/.openclaw/workspace/skills/post-pull-request/scripts/poll_pr.sh <PR> <owner/repo> --timeout-minutes 20
-# Fix any issues, push, re-run poll_pr.sh until clean
-
-# 3. Merge
+# 4. Merge
 gh pr merge <PR> --repo <owner/repo> --squash --auto
 
-# 4. Verify deploy — do not skip this step
-bash ~/.openclaw/workspace/skills/post-pull-request/scripts/check_deploy.sh <owner/repo> --url <https://city.urbanism-guide.com/> --timeout-minutes 15
+# 5. Verify the deploy on main completed successfully and the live site is up
 ```
