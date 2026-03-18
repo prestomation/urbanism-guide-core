@@ -1,0 +1,7 @@
+{{- $data := site.Data.site_stats -}}
+{{- $path := split (.Get 0) "." -}}
+{{- $val := $data -}}
+{{- range $path -}}
+  {{- $val = index $val . -}}
+{{- end -}}
+{{- $val -}}

@@ -1,0 +1,85 @@
+<div class="glossary-filter" id="glossary-filter" role="toolbar" aria-label="Filter glossary terms by jurisdiction level">
+  <span class="glossary-filter-label" id="glossary-filter-label">Filter:</span>
+  <button class="glossary-filter-btn active" data-filter="all" aria-pressed="true">All</button>
+  <button class="glossary-filter-btn" data-filter="federal" aria-pressed="false">Federal</button>
+  <button class="glossary-filter-btn" data-filter="state" aria-pressed="false">State</button>
+  <button class="glossary-filter-btn" data-filter="county" aria-pressed="false">County</button>
+  <button class="glossary-filter-btn" data-filter="city" aria-pressed="false">City</button>
+  <button class="glossary-filter-btn" data-filter="concept" aria-pressed="false">Concept</button>
+  <button class="glossary-filter-btn" data-filter="infrastructure" aria-pressed="false">Infrastructure</button>
+</div>
+<p class="glossary-no-results" id="glossary-no-results" style="display:none;" role="status" aria-live="polite">No terms found for this filter on this page. Try another category or check a different glossary section.</p>
+
+<script>
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var filterBar = document.getElementById('glossary-filter');
+    if (!filterBar) return;
+
+    var buttons = filterBar.querySelectorAll('.glossary-filter-btn');
+    var terms = document.querySelectorAll('.glossary-term');
+    var noResults = document.getElementById('glossary-no-results');
+
+    // Add tag badges to each term heading
+    var tagLabels = {
+      federal: 'Federal',
+      state: 'State',
+      county: 'County',
+      city: 'City',
+      concept: 'Concept',
+      infrastructure: 'Infrastructure'
+    };
+
+    terms.forEach(function(term) {
+      var tag = term.getAttribute('data-tag');
+      var heading = term.querySelector('h2');
+      if (heading && tag && tagLabels[tag]) {
+        var badge = document.createElement('span');
+        badge.className = 'glossary-tag glossary-tag-' + tag;
+        badge.textContent = tagLabels[tag];
+        badge.setAttribute('aria-label', tagLabels[tag] + ' level');
+        heading.appendChild(badge);
+      }
+    });
+
+    // Filter logic with keyboard navigation
+    buttons.forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var filter = this.getAttribute('data-filter');
+        var visibleCount = 0;
+
+        buttons.forEach(function(b) {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
+        this.classList.add('active');
+        this.setAttribute('aria-pressed', 'true');
+
+        terms.forEach(function(term) {
+          if (filter === 'all' || term.getAttribute('data-tag') === filter) {
+            term.style.display = '';
+            visibleCount++;
+          } else {
+            term.style.display = 'none';
+          }
+        });
+
+        noResults.style.display = visibleCount === 0 ? '' : 'none';
+      });
+
+      // Keyboard navigation between filter buttons
+      btn.addEventListener('keydown', function(e) {
+        var btnsArray = Array.from(buttons);
+        var idx = btnsArray.indexOf(this);
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault();
+          btnsArray[(idx + 1) % btnsArray.length].focus();
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault();
+          btnsArray[(idx - 1 + btnsArray.length) % btnsArray.length].focus();
+        }
+      });
+    });
+  });
+})();
+</script>
