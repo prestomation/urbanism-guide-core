@@ -1,16 +1,17 @@
-{{- $data := site.Data.site_stats -}}
+{{- $fileName := .Get "file" | default "site_stats" -}}
+{{- $data := index site.Data $fileName -}}
 {{- if not $data -}}
-  {{- errorf "stat shortcode: data/site_stats.yaml not found or empty" -}}
+  {{- errorf "stat shortcode: data/%s.yaml not found or empty" $fileName -}}
 {{- end -}}
 {{- $path := split (.Get 0) "." -}}
 {{- $val := $data -}}
 {{- range $path -}}
   {{- if not $val -}}
-    {{- errorf "stat shortcode: key %q not found in site_stats.yaml" . -}}
+    {{- errorf "stat shortcode: key %q not found in %s.yaml" . $fileName -}}
   {{- end -}}
   {{- $val = index $val . -}}
 {{- end -}}
 {{- if eq $val nil -}}
-  {{- errorf "stat shortcode: path %q resolved to nil in site_stats.yaml" (.Get 0) -}}
+  {{- errorf "stat shortcode: path %q resolved to nil in %s.yaml" (.Get 0) $fileName -}}
 {{- end -}}
 {{- $val -}}

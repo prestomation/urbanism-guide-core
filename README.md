@@ -4,6 +4,20 @@ Shared Hugo module providing layouts, shortcodes, CSS framework, archetypes, bui
 
 City-specific repositories import this module and inherit all resources. Local files automatically override module files due to Hugo's precedence rules.
 
+## Starting a New City
+
+The fastest way to create a new city site is the scaffold script:
+
+```bash
+bash scripts/new-city.sh <city-name> <subdomain>.urbanism-guide.com prestomation/<city>-urbanism-guide "America/Timezone"
+```
+
+This generates a complete, ready-to-deploy city repo structure including `go.mod`, `hugo.toml`, brand CSS, GitHub Actions workflows, content stubs, and data examples.
+
+For full agent instructions (DNS setup, versioning, CI/CD details), see [AGENTS.md](AGENTS.md).
+
+---
+
 ## Quick Start
 
 ### 1. City repo `go.mod`
