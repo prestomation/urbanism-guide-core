@@ -164,17 +164,37 @@ All three are thin stubs calling core's reusable workflows. The core workflows h
 
 ### The correct workflow for version bumps
 
-```bash
-# Wrong — bypasses validation
-git commit -m "chore: bump core to v0.3.1" && git push origin main
+Two skill scripts must be used — they handle waiting, Amazon Q review triggering, and log collection automatically. Do not manually poll or curl for status.
 
-# Right — open a PR, let preview validate, then merge
+**Script 1 — Before merge:** `poll_pr.sh`
+Triggers Amazon Q review, waits for all CI checks to complete, outputs all check results and review comments. Run after every push to a PR branch.
+```bash
+bash ~/.openclaw/workspace/skills/post-pull-request/scripts/poll_pr.sh <PR_NUMBER> <owner/repo> [--timeout-minutes 20]
+```
+Read the output carefully — address every Amazon Q comment and every failed check before merging.
+
+**Script 2 — After merge:** `check_deploy.sh`
+Waits for the deploy CI run on `main` to complete, then hits the live URL and verifies HTTP 200. Do not declare success until this returns clean.
+```bash
+bash ~/.openclaw/workspace/skills/post-pull-request/scripts/check_deploy.sh <owner/repo> --url <https://city.urbanism-guide.com/> [--timeout-minutes 15]
+```
+
+**Full example for a version bump:**
+```bash
+# 1. Create branch and PR
 git checkout -b chore/bump-core-v0.3.1
 # edit go.mod
 git commit -m "chore: bump urbanism-guide-core to v0.3.1"
 git push origin chore/bump-core-v0.3.1
-gh pr create --title "chore: bump core to v0.3.1" --body "Bumps urbanism-guide-core to v0.3.1"
-bash ~/.openclaw/workspace/skills/post-pull-request/scripts/poll_pr.sh <PR> <owner/repo>
-gh pr merge <PR> --squash --auto
-bash ~/.openclaw/workspace/skills/post-pull-request/scripts/check_deploy.sh <owner/repo> --url <url>
+gh pr create --title "chore: bump core to v0.3.1" --body "Bumps urbanism-guide-core to v0.3.1" --repo <owner/repo>
+
+# 2. Wait for checks + Amazon Q review — READ THE OUTPUT
+bash ~/.openclaw/workspace/skills/post-pull-request/scripts/poll_pr.sh <PR> <owner/repo> --timeout-minutes 20
+# Fix any issues, push, re-run poll_pr.sh until clean
+
+# 3. Merge
+gh pr merge <PR> --repo <owner/repo> --squash --auto
+
+# 4. Verify deploy — do not skip this step
+bash ~/.openclaw/workspace/skills/post-pull-request/scripts/check_deploy.sh <owner/repo> --url <https://city.urbanism-guide.com/> --timeout-minutes 15
 ```
