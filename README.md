@@ -13,7 +13,7 @@ module github.com/your-org/your-city-urbanism-guide
 
 go 1.21
 
-require github.com/prestomation/urbanism-guide-core v0.1.0
+require github.com/prestomation/urbanism-guide-core v0.2.0
 ```
 
 ### 2. City repo `hugo.toml`
@@ -99,12 +99,86 @@ jobs:
 
 | Layer | Contents | Override |
 |-------|----------|----------|
-| **Layouts** | `baseof.html`, shortcodes (`timeline`, `blog-list`), partials (search, analytics, inject hooks) | Drop a local file at the same path |
+| **Layouts** | `baseof.html`, shortcodes (`timeline`, `blog-list`, `glossary-filter`, `stat`), partials (search, analytics, inject hooks) | Drop a local file at the same path |
 | **CSS** | `framework.css` using CSS custom properties for all colors | Create `static/css/brand.css` or override `framework.css` entirely |
 | **Archetypes** | `default.md`, `glossary.md`, `blog.md` | Place local archetypes at same path |
-| **Scripts** | `validate-timeline.py`, `check-external-links.py` | Provide local scripts or disable via workflow inputs |
-| **Workflows** | `deploy.yml`, `pr-preview.yml`, `pr-preview-cleanup.yml` (all `workflow_call`) | Don't call the reusable workflow; write your own |
+| **Scripts** | `validate-timeline.py`, `check-external-links.py`, `content-metrics.py` | Provide local scripts or disable via workflow inputs |
+| **Workflows** | `deploy.yml`, `pr-preview.yml`, `pr-preview-cleanup.yml`, `validate.yml` (all `workflow_call`) | Don't call the reusable workflow; write your own |
 | **Config** | Shared `hugo.toml` defaults, `.htmltest.yml` | Override any setting in city `hugo.toml` |
+
+## Shortcodes
+
+### `glossary-filter`
+
+Renders an interactive filter bar for glossary pages. Filters visible glossary terms by `data-tag` attribute. Requires glossary terms to be wrapped in `<div class="glossary-term" data-tag="...">`.
+
+Supported tag values: `federal`, `state`, `county`, `city`, `concept`, `infrastructure`.
+
+```markdown
+{{</* glossary-filter */>}}
+
+<div class="glossary-term" data-tag="city">
+
+## Zoning
+...
+
+</div>
+```
+
+The shortcode automatically injects badge labels next to each term heading and handles keyboard navigation between filter buttons.
+
+### `stat`
+
+Injects a value from `data/site_stats.yaml` using dot notation. Useful for keeping time-sensitive numbers up to date in one place.
+
+```markdown
+The city has {{</* stat "housing.units_permitted_2024" */>}} permitted housing units.
+```
+
+Your city repo must provide `data/site_stats.yaml` with the appropriate keys.
+
+## Scripts
+
+### `content-metrics.py`
+
+Prints content counts for a site repo. Run from the repo root:
+
+```bash
+python3 scripts/content-metrics.py
+# or for machine-readable output:
+python3 scripts/content-metrics.py --json
+```
+
+Reports: guide count, glossary term count (by category), timeline entries, blog posts, total word count, paragraph count, and unique external links.
+
+## Validate Workflow
+
+The `validate.yml` reusable workflow builds the site and optionally validates the timeline and links. Use this for city repos that need CI validation on pull requests but do not use GitHub Pages (or want a separate validate step).
+
+```yaml
+# .github/workflows/validate.yml
+name: Validate
+on:
+  pull_request:
+    branches: ["main"]
+jobs:
+  validate:
+    uses: prestomation/urbanism-guide-core/.github/workflows/validate.yml@main
+    with:
+      timezone: "America/Chicago"
+      run_timeline_validation: true
+      run_link_validation: false
+```
+
+**Inputs:**
+
+| Input | Default | Description |
+|-------|---------|-------------|
+| `timezone` | `America/Los_Angeles` | TZ for Hugo build |
+| `hugo_version` | `0.147.0` | Hugo version to install |
+| `core_version` | `v0.2.0` | Core tag to checkout fallback `validate-timeline.py` from via `actions/checkout` (git-verified, supply-chain safe) |
+| `run_timeline_validation` | `true` | Run `validate-timeline.py` if present |
+| `run_link_validation` | `true` | Run `htmltest` link checker |
 
 ## Content Structure Convention
 
@@ -122,7 +196,7 @@ All features degrade gracefully if unused.
 City repos should pin to a specific release tag rather than tracking `@main`:
 
 ```
-require github.com/prestomation/urbanism-guide-core v0.1.0
+require github.com/prestomation/urbanism-guide-core v0.2.0
 ```
 
 **To update to a new core version:**

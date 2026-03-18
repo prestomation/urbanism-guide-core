@@ -143,6 +143,10 @@ body.book-kind-home .book-columns {
   margin-bottom: 0.5rem;
 }
 
+body.book-kind-home .book-columns {
+  cursor: pointer;
+}
+
 body.book-kind-home .book-columns > .flex-even {
   background: var(--gray-100, #f8f9fa);
   border: 1px solid var(--gray-200, #e9ecef);
@@ -171,6 +175,11 @@ body.book-kind-home .book-columns > .flex-even h3 a[href] {
   color: var(--color-link);
   text-decoration: none;
   transition: color 0.15s ease;
+}
+
+/* Hide the theme's heading anchor icon inside cards */
+body.book-kind-home .book-columns > .flex-even h3 a.anchor {
+  display: none;
 }
 
 body.book-kind-home .book-columns > .flex-even h3 a[href]:hover {
@@ -693,4 +702,216 @@ body.book-kind-home .markdown > hr + p {
 
 .book-toc nav ul a[href]:hover {
   opacity: 0.7;
+}
+
+/* --------------------------------------------------------------------------
+   22. Content depth labels (homepage cards)
+   -------------------------------------------------------------------------- */
+.content-label {
+  display: inline-block;
+  font-size: 0.65rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.content-label-start {
+  background: rgba(0, 131, 154, 0.12);
+  color: var(--accent-teal);
+}
+
+.content-label-reference {
+  background: rgba(0, 70, 173, 0.08);
+  color: var(--color-link);
+}
+
+.content-label-deep {
+  background: rgba(163, 213, 89, 0.15);
+  color: #5a8a0a;
+}
+
+.content-label-action {
+  background: rgba(254, 203, 0, 0.15);
+  color: #9a7500;
+}
+
+@media (prefers-color-scheme: dark) {
+  .content-label-start {
+    background: rgba(44, 200, 217, 0.15);
+    color: var(--accent-teal);
+  }
+
+  .content-label-reference {
+    background: rgba(99, 177, 229, 0.12);
+    color: var(--color-link);
+  }
+
+  .content-label-deep {
+    background: rgba(184, 224, 124, 0.15);
+    color: var(--accent-emerald);
+  }
+
+  .content-label-action {
+    background: rgba(255, 216, 77, 0.15);
+    color: var(--accent-gold);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   23. Glossary filter bar
+   -------------------------------------------------------------------------- */
+.glossary-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1rem 0 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--gray-100, #f8f9fa);
+  border: 1px solid var(--gray-200, #e9ecef);
+  border-radius: var(--border-radius);
+}
+
+.glossary-filter-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--body-font-color, #333);
+  opacity: 0.6;
+  margin-right: 0.25rem;
+}
+
+.glossary-filter-btn {
+  background: transparent;
+  border: 1px solid var(--gray-200, #e9ecef);
+  border-radius: 1rem;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  color: var(--body-font-color, #333);
+  font-family: inherit;
+}
+
+.glossary-filter-btn:hover {
+  border-color: var(--color-link);
+  color: var(--color-link);
+}
+
+.glossary-filter-btn.active {
+  background: var(--color-link);
+  color: white;
+  border-color: var(--color-link);
+}
+
+/* --------------------------------------------------------------------------
+   24. Glossary tag badges
+   -------------------------------------------------------------------------- */
+.glossary-tag {
+  display: inline-block;
+  font-size: 0.6rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 1rem;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  position: relative;
+  top: -2px;
+}
+
+.glossary-tag-federal {
+  background: rgba(93, 63, 211, 0.1);
+  color: #5D3FD3;
+}
+
+.glossary-tag-state {
+  background: rgba(0, 131, 154, 0.1);
+  color: #00839A;
+}
+
+.glossary-tag-county {
+  background: rgba(180, 130, 0, 0.1);
+  color: #B48200;
+}
+
+.glossary-tag-city {
+  background: rgba(0, 70, 173, 0.1);
+  color: #0046AD;
+}
+
+.glossary-tag-concept {
+  background: rgba(108, 117, 125, 0.1);
+  color: #6C757D;
+}
+
+.glossary-tag-infrastructure {
+  background: rgba(194, 94, 0, 0.1);
+  color: #C25E00;
+}
+
+@media (prefers-color-scheme: dark) {
+  .glossary-tag-federal {
+    background: rgba(155, 135, 245, 0.15);
+    color: #B0A0F0;
+  }
+
+  .glossary-tag-state {
+    background: rgba(44, 200, 217, 0.15);
+    color: #2CC8D9;
+  }
+
+  .glossary-tag-county {
+    background: rgba(255, 216, 77, 0.15);
+    color: #FFD84D;
+  }
+
+  .glossary-tag-city {
+    background: rgba(99, 177, 229, 0.15);
+    color: #63B1E5;
+  }
+
+  .glossary-tag-concept {
+    background: rgba(173, 181, 189, 0.15);
+    color: #ADB5BD;
+  }
+
+  .glossary-tag-infrastructure {
+    background: rgba(255, 159, 69, 0.15);
+    color: #FF9F45;
+  }
+}
+
+.glossary-no-results {
+  text-align: center;
+  color: #6C757D;
+  font-style: italic;
+  padding: 2rem 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .glossary-no-results {
+    color: #ADB5BD;
+  }
+}
+
+@media (max-width: 600px) {
+  .glossary-filter {
+    gap: 0.35rem;
+    padding: 0.5rem 0.75rem;
+  }
+
+  .glossary-filter-btn {
+    padding: 0.25rem 0.65rem;
+    font-size: 0.75rem;
+  }
+
+  .glossary-tag {
+    font-size: 0.55rem;
+    padding: 0.1rem 0.4rem;
+  }
 }

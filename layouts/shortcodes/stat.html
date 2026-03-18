@@ -1,0 +1,16 @@
+{{- $data := site.Data.site_stats -}}
+{{- if not $data -}}
+  {{- errorf "stat shortcode: data/site_stats.yaml not found or empty" -}}
+{{- end -}}
+{{- $path := split (.Get 0) "." -}}
+{{- $val := $data -}}
+{{- range $path -}}
+  {{- if not $val -}}
+    {{- errorf "stat shortcode: key %q not found in site_stats.yaml" . -}}
+  {{- end -}}
+  {{- $val = index $val . -}}
+{{- end -}}
+{{- if eq $val nil -}}
+  {{- errorf "stat shortcode: path %q resolved to nil in site_stats.yaml" (.Get 0) -}}
+{{- end -}}
+{{- $val -}}

@@ -1,0 +1,126 @@
+name: Validate
+
+on:
+  workflow_call:
+    inputs:
+      timezone:
+        description: "Timezone for Hugo build"
+        required: false
+        type: string
+        default: "America/Los_Angeles"
+      hugo_version:
+        description: "Hugo version"
+        required: false
+        type: string
+        default: "0.147.0"
+      core_version:
+        description: "urbanism-guide-core tag to fetch fallback scripts from (e.g. v0.2.0)"
+        required: false
+        type: string
+        default: "v0.2.0"
+      run_timeline_validation:
+        description: "Whether to run timeline validation"
+        required: false
+        type: boolean
+        default: true
+      run_link_validation:
+        description: "Whether to run htmltest link validation"
+        required: false
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: "validate-${{ github.ref }}"
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      HUGO_VERSION: ${{ inputs.hugo_version }}
+    steps:
+      - name: Install Hugo CLI
+        run: |
+          set -euo pipefail
+          wget -O ${{ runner.temp }}/hugo.deb \
+            https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb
+          wget -O ${{ runner.temp }}/hugo_checksums.txt \
+            https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_${HUGO_VERSION}_checksums.txt
+          cd ${{ runner.temp }}
+          grep "hugo_extended_${HUGO_VERSION}_linux-amd64.deb" hugo_checksums.txt | sha256sum --check --strict || {
+            echo "::error::Hugo deb checksum verification failed — aborting"
+            exit 1
+          }
+          sudo dpkg -i ${{ runner.temp }}/hugo.deb
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Sync Hugo modules
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+        run: hugo mod tidy
+
+      - name: Fetch core scripts (for fallback timeline validation)
+        if: ${{ inputs.run_timeline_validation }}
+        uses: actions/checkout@v4
+        with:
+          repository: prestomation/urbanism-guide-core
+          ref: ${{ inputs.core_version }}
+          path: .urbanism-core
+          sparse-checkout: |
+            scripts/validate-timeline.py
+          sparse-checkout-cone-mode: false
+
+      - name: Validate timeline order
+        if: ${{ inputs.run_timeline_validation }}
+        run: |
+          if [ -f scripts/validate-timeline.py ]; then
+            python3 scripts/validate-timeline.py
+          elif [ -f data/timeline.yaml ]; then
+            # Use git-verified checkout of core scripts instead of curl (supply-chain safe)
+            python3 .urbanism-core/scripts/validate-timeline.py
+          fi
+
+      - name: Build with Hugo
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+          HUGO_ENVIRONMENT: production
+          TZ: ${{ inputs.timezone }}
+        run: hugo --gc --minify
+
+      - name: Build search index with Pagefind
+        run: npx pagefind --site public
+
+      - name: Validate build output
+        run: |
+          PAGE_COUNT=$(find public -name "index.html" | wc -l)
+          if [ "$PAGE_COUNT" -lt 3 ]; then
+            echo "::error::Hugo built only $PAGE_COUNT pages — possible empty or broken build"
+            exit 1
+          fi
+          echo "✅ Build output: $PAGE_COUNT pages"
+
+      - name: Validate links
+        if: ${{ inputs.run_link_validation }}
+        run: |
+          set -euo pipefail
+          HTMLTEST_VERSION="0.17.0"
+          HTMLTEST_SHA256="775c597ee74899d6002cd2d93076f897f4ba68686bceabe2e5d72e84c57bc0fb"
+          curl -fsSL "https://github.com/wjdp/htmltest/releases/download/v${HTMLTEST_VERSION}/htmltest_${HTMLTEST_VERSION}_linux_amd64.tar.gz" \
+            -o /tmp/htmltest.tar.gz
+          echo "${HTMLTEST_SHA256}  /tmp/htmltest.tar.gz" | sha256sum --check --strict || {
+            echo "::error::htmltest checksum verification failed — aborting"
+            exit 1
+          }
+          tar xz -C /tmp -f /tmp/htmltest.tar.gz
+          /tmp/htmltest --conf .htmltest.yml
