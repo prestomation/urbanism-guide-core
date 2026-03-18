@@ -23,7 +23,10 @@ def count_glossary_terms(glossary_dir: Path) -> dict:
     for md_file in sorted(glossary_dir.glob("*.md")):
         if md_file.name == "_index.md":
             continue
-        text = md_file.read_text()
+        try:
+            text = md_file.read_text(encoding='utf-8')
+        except Exception:
+            continue
         count = len(re.findall(r'<div class="glossary-term"', text))
         category = md_file.stem.replace("-", " ").title()
         by_category[category] = count
@@ -35,7 +38,10 @@ def count_timeline_entries(timeline_path: Path) -> int:
     """Count entries in timeline.yaml without requiring PyYAML."""
     if not timeline_path.exists():
         return 0
-    text = timeline_path.read_text()
+    try:
+        text = timeline_path.read_text(encoding='utf-8')
+    except Exception:
+        return 0
     return len(re.findall(r"^- year:", text, re.MULTILINE))
 
 
