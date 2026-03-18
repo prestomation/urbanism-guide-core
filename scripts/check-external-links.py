@@ -47,7 +47,7 @@ def find_external_urls(repo_root: Path) -> dict[str, list[tuple[int, str]]]:
     # For markdown, match URL chars including balanced parens: (text) groups
     markdown_link = re.compile(r'\]\((https?://(?:[^()\s]|\([^)]*\))+)\)')
     yaml_url = re.compile(r'url:\s*["\']?(https?://[^\s"\']+)["\']?')
-    bare_url = re.compile(r'(?<![(\["\'])(https?://[^\s"\'<>\)\]]+)')
+    bare_url = re.compile(r'(?<![(\["\'<])(https?://[^\s"\'<>\)\]]+)')
     results = {}
 
     # Search in content and data directories

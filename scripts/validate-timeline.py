@@ -78,8 +78,11 @@ def main():
         # Count entries for info
         with open(timeline_path, 'r') as f:
             entries = yaml.safe_load(f)
-        years = [e['year'] for e in entries]
-        print(f"Timeline is valid: {len(entries)} entries, {max(years)}-{min(years)}")
+        years = [e['year'] for e in entries] if entries else []
+        if years:
+            print(f"Timeline is valid: {len(entries)} entries, {max(years)}-{min(years)}")
+        else:
+            print("Timeline is valid: 0 entries")
         sys.exit(0)
     else:
         print("Timeline validation failed:")
