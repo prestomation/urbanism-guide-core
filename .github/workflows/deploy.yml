@@ -85,6 +85,23 @@ jobs:
       - name: Build search index with Pagefind
         run: npx pagefind --site public
 
+      - name: Validate build output
+        run: |
+          PAGE_COUNT=$(find public -name "index.html" | wc -l)
+          if [ "$PAGE_COUNT" -lt 3 ]; then
+            echo "::error::Hugo built only $PAGE_COUNT pages — possible empty or broken build"
+            exit 1
+          fi
+          echo "✅ Build output: $PAGE_COUNT pages"
+
+          if [ -f static/CNAME ] || [ -f CNAME ]; then
+            if [ ! -f public/CNAME ]; then
+              echo "::error::CNAME found in repo but missing from build output — custom domain will 404 on gh-pages"
+              exit 1
+            fi
+            echo "✅ CNAME present in build output: $(cat public/CNAME)"
+          fi
+
       - name: Validate links
         if: ${{ inputs.run_link_validation }}
         run: |
@@ -113,6 +130,12 @@ jobs:
           # Copy built site to root
           cp -r /tmp/site-build/* .
           touch .nojekyll
+
+          # Preserve CNAME for custom domain (GitHub Pages requires this on gh-pages branch)
+          # Hugo copies static/CNAME automatically; fall back to repo-root CNAME if present
+          if [ ! -f CNAME ] && [ -f "$GITHUB_WORKSPACE/CNAME" ]; then
+            cp "$GITHUB_WORKSPACE/CNAME" CNAME
+          fi
 
           git add -A
           git commit -m "Deploy site from ${{ github.sha }}" || exit 0
