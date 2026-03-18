@@ -55,6 +55,11 @@ jobs:
       - name: Install Node.js dependencies
         run: "[[ -f package-lock.json || -f npm-shrinkwrap.json ]] && npm ci || true"
 
+      - name: Sync Hugo modules
+        env:
+          HUGO_CACHEDIR: ${{ runner.temp }}/hugo_cache
+        run: hugo mod tidy
+
       - name: Validate timeline order
         if: ${{ inputs.run_timeline_validation }}
         run: |
