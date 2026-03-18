@@ -15,6 +15,8 @@ from pathlib import Path
 
 def count_glossary_terms(glossary_dir: Path) -> dict:
     """Count glossary terms across all category files."""
+    if not glossary_dir.exists():
+        return {"total": 0, "by_category": {}}
     total = 0
     by_category = {}
     for md_file in sorted(glossary_dir.glob("*.md")):
@@ -30,12 +32,16 @@ def count_glossary_terms(glossary_dir: Path) -> dict:
 
 def count_timeline_entries(timeline_path: Path) -> int:
     """Count entries in timeline.yaml without requiring PyYAML."""
+    if not timeline_path.exists():
+        return 0
     text = timeline_path.read_text()
     return len(re.findall(r"^- year:", text, re.MULTILINE))
 
 
 def count_guides(guides_dir: Path) -> int:
     """Count guide pages (excluding _index.md)."""
+    if not guides_dir.exists():
+        return 0
     return sum(1 for f in guides_dir.glob("*.md") if f.name != "_index.md")
 
 
@@ -90,6 +96,8 @@ def count_external_links(repo_root: Path) -> int:
 
 def count_words_and_paragraphs(content_dir: Path) -> dict:
     """Count total words and paragraphs across all Markdown content."""
+    if not content_dir.exists():
+        return {"words": 0, "paragraphs": 0}
     total_words = 0
     total_paragraphs = 0
 

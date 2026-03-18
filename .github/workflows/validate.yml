@@ -13,6 +13,11 @@ on:
         required: false
         type: string
         default: "0.147.0"
+      core_version:
+        description: "urbanism-guide-core tag to fetch fallback scripts from (e.g. v0.2.0)"
+        required: false
+        type: string
+        default: "v0.2.0"
       run_timeline_validation:
         description: "Whether to run timeline validation"
         required: false
@@ -62,7 +67,11 @@ jobs:
           if [ -f scripts/validate-timeline.py ]; then
             python3 scripts/validate-timeline.py
           elif [ -f data/timeline.yaml ]; then
-            curl -fsSL https://raw.githubusercontent.com/prestomation/urbanism-guide-core/main/scripts/validate-timeline.py | python3
+            # Download from a pinned release tag (not main) to prevent supply-chain risk
+            CORE_VERSION="${{ inputs.core_version }}"
+            curl -fsSL "https://raw.githubusercontent.com/prestomation/urbanism-guide-core/${CORE_VERSION}/scripts/validate-timeline.py" \
+              -o /tmp/validate-timeline.py
+            python3 /tmp/validate-timeline.py
           fi
 
       - name: Build with Hugo

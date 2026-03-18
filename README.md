@@ -176,6 +176,7 @@ jobs:
 |-------|---------|-------------|
 | `timezone` | `America/Los_Angeles` | TZ for Hugo build |
 | `hugo_version` | `0.147.0` | Hugo version to install |
+| `core_version` | `v0.2.0` | Core tag to fetch fallback `validate-timeline.py` from (pinned to prevent supply-chain risk) |
 | `run_timeline_validation` | `true` | Run `validate-timeline.py` if present |
 | `run_link_validation` | `true` | Run `htmltest` link checker |
 

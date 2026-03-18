@@ -33,7 +33,8 @@
     terms.forEach(function(term) {
       var tag = term.getAttribute('data-tag');
       var heading = term.querySelector('h2');
-      if (heading && tag && tagLabels[tag]) {
+      // Guard against duplicate badges if shortcode is rendered multiple times
+      if (heading && tag && tagLabels[tag] && !heading.querySelector('.glossary-tag')) {
         var badge = document.createElement('span');
         badge.className = 'glossary-tag glossary-tag-' + tag;
         badge.textContent = tagLabels[tag];
