@@ -85,6 +85,23 @@ jobs:
       - name: Build search index with Pagefind
         run: npx pagefind --site public
 
+      - name: Validate build output
+        run: |
+          PAGE_COUNT=$(find public -name "index.html" | wc -l)
+          if [ "$PAGE_COUNT" -lt 3 ]; then
+            echo "::error::Hugo built only $PAGE_COUNT pages — possible empty or broken build"
+            exit 1
+          fi
+          echo "✅ Build output: $PAGE_COUNT pages"
+
+          if [ -f static/CNAME ] || [ -f CNAME ]; then
+            if [ ! -f public/CNAME ]; then
+              echo "::error::CNAME found in repo but missing from build output — custom domain will 404 on gh-pages"
+              exit 1
+            fi
+            echo "✅ CNAME present in build output: $(cat public/CNAME)"
+          fi
+
       - name: Validate links
         if: ${{ inputs.run_link_validation }}
         run: |
