@@ -143,3 +143,38 @@ All three are thin stubs calling core's reusable workflows. The core workflows h
 - `go.sum` is not committed in city repos — `hugo mod tidy` runs in CI instead
 - Fine-grained GitHub PAT cannot configure GitHub Pages via API — must be done manually in repo Settings
 - Cloudflare Pages doesn't support the gh-pages push pattern — use `validate.yml` + Cloudflare auto-build
+
+## CI Discipline — Shift Left
+
+**Never push changes directly to `main`.** All changes — including go.mod version bumps — must go through a PR so `pr-preview.yml` validates the build before merge. Direct-to-main pushes skip the pre-merge validation gate and are the primary cause of deploy failures.
+
+### Rules
+
+1. **Every change needs a PR** — `go.mod` bumps, content edits, config changes, workflow updates. No exceptions.
+2. **PR preview must pass before merge** — `pr-preview.yml` runs the full build + validation. If it fails, fix before merging.
+3. **`deploy.yml` and `pr-preview.yml` must stay in sync** — any validation step added to one must be added to the other. The PR preview is only useful as a gate if it runs the same checks as the deploy.
+4. **After merge, always run the deploy checker** before reporting success:
+   ```bash
+   bash ~/.openclaw/workspace/skills/post-pull-request/scripts/check_deploy.sh \
+     prestomation/<city>-urbanism-guide \
+     --url https://<city>.urbanism-guide.com/ \
+     --timeout-minutes 15
+   ```
+5. **If deploy fails, do not push more commits to `main`** — open a new PR with the fix, let it go through preview, then merge.
+
+### The correct workflow for version bumps
+
+```bash
+# Wrong — bypasses validation
+git commit -m "chore: bump core to v0.3.1" && git push origin main
+
+# Right — open a PR, let preview validate, then merge
+git checkout -b chore/bump-core-v0.3.1
+# edit go.mod
+git commit -m "chore: bump urbanism-guide-core to v0.3.1"
+git push origin chore/bump-core-v0.3.1
+gh pr create --title "chore: bump core to v0.3.1" --body "Bumps urbanism-guide-core to v0.3.1"
+bash ~/.openclaw/workspace/skills/post-pull-request/scripts/poll_pr.sh <PR> <owner/repo>
+gh pr merge <PR> --squash --auto
+bash ~/.openclaw/workspace/skills/post-pull-request/scripts/check_deploy.sh <owner/repo> --url <url>
+```
