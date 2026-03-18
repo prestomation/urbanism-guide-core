@@ -240,8 +240,8 @@ EOF
 done
 
 # Copy data examples
-cp data/site_stats.yaml.example "$OUTPUT_DIR/data/site_stats.yaml.example" 2>/dev/null || true
-cp data/timeline.yaml.example "$OUTPUT_DIR/data/timeline.yaml.example" 2>/dev/null || true
+cp examples/site_stats.yaml.example "$OUTPUT_DIR/data/site_stats.yaml.example" 2>/dev/null || true
+cp examples/timeline.yaml.example "$OUTPUT_DIR/data/timeline.yaml.example" 2>/dev/null || true
 
 echo ""
 echo "=== Scaffolded: $OUTPUT_DIR ==="

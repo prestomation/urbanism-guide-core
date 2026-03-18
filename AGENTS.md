@@ -58,7 +58,7 @@ title = "Your City Urbanism Guide"
 
 **`content/_index.md`** — homepage intro paragraph (the card grid is scaffolded already)
 
-**`data/timeline.yaml`** — city history entries (copy from `.example`, add entries newest-first)
+**`data/timeline.yaml`** — city history entries (copy from `examples/`, add entries newest-first)
 
 **`data/site_stats.yaml`** — key city statistics used by `{{< stat >}}` shortcode
 
