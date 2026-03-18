@@ -1,0 +1,15 @@
+# Example site_stats.yaml — copy to data/site_stats.yaml and fill in your city's values
+# Used by the {{< stat "key.path" >}} shortcode
+
+city:
+  population: "50,000"
+  area_sq_miles: "5.5"
+  density_per_sq_mile: "9,000"
+
+transit:
+  bus_routes: 12
+  annual_ridership: "1.2 million"
+
+housing:
+  median_home_price: "$350,000"
+  vacancy_rate: "4.2%"

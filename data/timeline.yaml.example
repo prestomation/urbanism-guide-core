@@ -1,0 +1,14 @@
+# Example timeline.yaml entries — copy to data/timeline.yaml
+# Used by the {{< timeline >}} shortcode
+# Entries must be in REVERSE chronological order (newest first)
+
+- year: 2024
+  title: "Example Event Title"
+  description: "What happened and why it matters for urbanism."
+  sources:
+    - label: "Source Name"
+      url: "https://example.com"
+
+- year: 2020
+  title: "Earlier Event"
+  description: "Description of the event."
