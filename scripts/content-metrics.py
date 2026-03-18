@@ -11,6 +11,7 @@ import json
 import re
 import sys
 from pathlib import Path
+from typing import Set
 
 
 def count_glossary_terms(glossary_dir: Path) -> dict:
@@ -62,7 +63,7 @@ def count_external_links(repo_root: Path) -> int:
         'localhost', '127.0.0.1', 'example.com', 'example.org',
     }
 
-    unique_urls: set[str] = set()
+    unique_urls: Set[str] = set()
     search_paths = [repo_root / "content", repo_root / "data"]
     extensions = {'.md', '.yaml', '.yml', '.html'}
 
@@ -77,7 +78,7 @@ def count_external_links(repo_root: Path) -> int:
             except Exception:
                 continue
             for line in content.splitlines():
-                urls_found: list[str] = []
+                urls_found = []
                 for match in markdown_link.finditer(line):
                     urls_found.append(match.group(1).rstrip('.,;:'))
                 for match in yaml_url.finditer(line):
@@ -102,7 +103,10 @@ def count_words_and_paragraphs(content_dir: Path) -> dict:
     total_paragraphs = 0
 
     for md_file in content_dir.rglob("*.md"):
-        text = md_file.read_text()
+        try:
+            text = md_file.read_text(encoding='utf-8')
+        except Exception:
+            continue
 
         # Strip YAML front matter
         text = re.sub(r"^---\n.*?\n---\n", "", text, count=1, flags=re.DOTALL)
