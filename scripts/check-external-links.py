@@ -146,9 +146,9 @@ def check_url(url: str, retries: int = 2) -> tuple[bool, str]:
                     if pattern in content:
                         # Check if it's in the title or main content area
                         # to avoid false positives from sidebar/footer text
-                        if f'<title>{pattern}' in content or \
-                           f'<h1>{pattern}' in content or \
-                           f'<h1 class' in content and pattern in content[:5000]:
+                        if (f'<title>{pattern}' in content or
+                            f'<h1>{pattern}' in content or
+                            (f'<h1 class' in content and pattern in content[:5000])):
                             return False, f"Soft 404 detected (page contains '{pattern}')"
 
                 return True, ""

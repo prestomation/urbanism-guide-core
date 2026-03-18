@@ -1,0 +1,24 @@
+/* ==========================================================================
+   Urbanism Guide Core — Default Brand Colors
+   Cities override this file in their own static/css/brand.css.
+   ========================================================================== */
+
+:root {
+  --color-link: #2563EB;
+  --accent-teal: #0891B2;
+  --accent-emerald: #059669;
+  --accent-gold: #D97706;
+  --accent-light-blue: #38BDF8;
+  --accent-gradient: linear-gradient(135deg, #2563EB, #0891B2);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-link: #60A5FA;
+    --accent-teal: #22D3EE;
+    --accent-emerald: #34D399;
+    --accent-gold: #FCD34D;
+    --accent-light-blue: #7DD3FC;
+    --accent-gradient: linear-gradient(135deg, #60A5FA, #22D3EE);
+  }
+}
