@@ -9,7 +9,29 @@ CITY_NAME="${1:?Usage: $0 <city-name> <base-url> <github-repo> <timezone>}"
 BASE_URL="${2:?}"
 GITHUB_REPO="${3:?}"
 TIMEZONE="${4:-America/Los_Angeles}"
+
+# Validate inputs — only allow safe characters to prevent path traversal
+# and shell injection via heredoc variable expansion
+if [[ ! "$CITY_NAME" =~ ^[a-z0-9][a-z0-9-]*$ ]]; then
+  echo "ERROR: city-name must be lowercase alphanumeric and hyphens only (e.g. 'portland')" >&2
+  exit 1
+fi
+if [[ ! "$BASE_URL" =~ ^[a-z0-9][a-z0-9.-]+$ ]]; then
+  echo "ERROR: base-url must be a valid hostname (e.g. 'portland.urbanism-guide.com')" >&2
+  exit 1
+fi
+if [[ ! "$GITHUB_REPO" =~ ^[a-zA-Z0-9_-]+/[a-zA-Z0-9_-]+$ ]]; then
+  echo "ERROR: github-repo must be in 'owner/repo' format (e.g. 'prestomation/portland-urbanism-guide')" >&2
+  exit 1
+fi
+
 OUTPUT_DIR="${CITY_NAME}-urbanism-guide"
+
+# Guard against overwriting an existing directory
+if [[ -e "$OUTPUT_DIR" ]]; then
+  echo "ERROR: directory '$OUTPUT_DIR' already exists. Remove it first or choose a different city name." >&2
+  exit 1
+fi
 
 echo "=== Scaffolding new city: $CITY_NAME ==="
 echo "Base URL: https://$BASE_URL/"

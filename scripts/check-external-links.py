@@ -229,9 +229,9 @@ def check_url(url: str, retries: int = 2) -> tuple[bool, str]:
                     if pattern in content:
                         # Check if it's in the title or main content area
                         # to avoid false positives from sidebar/footer text
-                        if f'<title>{pattern}' in content or \
-                           f'<h1>{pattern}' in content or \
-                           f'<h1 class' in content and pattern in content[:5000]:
+                        if (f'<title>{pattern}' in content or
+                                f'<h1>{pattern}' in content or
+                                (f'<h1 class' in content and pattern in content[:5000])):
                             return False, f"Soft 404 detected (page contains '{pattern}')"
 
                 return True, ""
@@ -251,16 +251,20 @@ def check_url(url: str, retries: int = 2) -> tuple[bool, str]:
                 return False, f"HTTP {e.code}"
 
         except URLError as e:
-            # Retry SSL certificate errors with an unverified context.
+            # Retry SSL certificate errors with a relaxed context.
             # Some .gov sites have misconfigured certificate chains;
             # we only need to confirm the page exists, not exchange secrets.
+            # Note: CERT_NONE is intentional here — this is a *link existence*
+            # check, not a security-sensitive connection. The fallback is only
+            # triggered after a certificate verification failure, and only for
+            # that specific URL on that specific retry attempt.
             if 'CERTIFICATE_VERIFY_FAILED' in str(e.reason):
                 try:
-                    ctx = ssl.create_default_context()
+                    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
                     ctx.check_hostname = False
-                    ctx.verify_mode = ssl.CERT_NONE
+                    ctx.verify_mode = ssl.CERT_NONE  # nosec B501 — link existence check only
                     req2 = Request(url, headers=headers)
-                    with urlopen(req2, timeout=45, context=ctx) as response:
+                    with urlopen(req2, timeout=45, context=ctx) as response:  # nosec B310
                         response.read()
                     return True, ""
                 except Exception:
